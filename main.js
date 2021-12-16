@@ -1,39 +1,69 @@
-const juan = {
-    name: "Juanito",
-    age: 18,
-    approvedCourses: ["Curso 1"],
-    addCourse(newCourse){
-        console.log("This", this);
-        console.log("This.approvedCourses", this.approvedCourses);
-        this.approvedCourses.push(newCourse);
-    }
+
+function isObject(subject){
+    return typeof subject == "object"
 }
 
+function isArray(subject){
+    return Array.isArray(subject);
+}
 
-// console.log(Object.keys(juan)); 
+function deepCopy(subject){
+    let copySubject;
 
-// console.log(Object.getOwnPropertyNames(juan)); 
+    const subjectIsArray = isArray(subject);
+    const subjectIsObject = isObject(subject);
 
-// console.log(Object.entries(juan)); 
+    if(subjectIsArray){
+
+        copySubject = [];
+
+    }else if(subjectIsObject){
+
+        copySubject={};
+
+    }else{
+
+        return subject
+    }
+
+    for(key in subject){
+        const keyIsObject = isObject(subject[key]);
+
+        if(keyIsObject){
+
+            copySubject[key]= deepCopy(subject[key]);
+
+        }else{
+            if(subjectIsArray){
+                copySubject.push(subject[key]);
+            }else{
+                copySubject[key] = subject[key];
+            }
+        }
+    }
+
+
+    return copySubject;
+}
+
+const baseStudent = {
+    name: undefined,
+    email: undefined,
+    age: undefined,
+    approvedCourses: undefined,
+    learningPaths: undefined,
+    socialMedia:{
+        twitter:undefined,
+        instagram: undefined,
+        facebook: undefined,
+    }
+
+}
+
+const juan = deepCopy(baseStudent);
+
+Object.seal(juan);
 
 
 
-//Aqui vamos a añadir nuevas propiedades a nuestro objeto juan
-
-// Object.defineProperty(juan,"navigator", {
-//     value: "Chrome",
-//     writable: true,
-//     enumerable: false,
-//     configurable:true,
-// });
-
-
-
-//El configurable se pone false y evita que la eliminemos
-//Object.seal(juan);
-
-// El writable y configurable se ponen en false, lo que impide que las editemos o eliminemos
-Object.freeze(juan);
-
-
-console.log(Object.getOwnPropertyDescriptors(juan));
+//juan.name = "Juanito";
