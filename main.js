@@ -48,46 +48,52 @@ function deepCopy(subject){
 
 
 
+
+
 function requiredParam(param){
     throw new Error(param + " es obligatorio");
 }
 
-function createLearningPath({
+function LearningPath({
     name = requiredParam("name"),
     courses = [],
 
 }){
-    const private = {
-        "_name": name,
-        "_courses": courses,
-    };
+    this.name = name;
+    this.courses = courses;
 
-    const public = {
-        get name(){
-            return private["_name"];
-        },
+    // const private = {
+    //     "_name": name,
+    //     "_courses": courses,
+    // };
 
-        set name(newName){
-            if(newName.length != 0){
-                private["_name"] = newName;
-            }else{
-                console.warn("Tu nombre debe tener al menos 1 caracter");
-            }
+
+    // const public = {
+    //     get name(){
+    //         return private["_name"];
+    //     },
+
+    //     set name(newName){
+    //         if(newName.length != 0){
+    //             private["_name"] = newName;
+    //         }else{
+    //             console.warn("Tu nombre debe tener al menos 1 caracter");
+    //         }
             
             
-        },
+    //     },
 
-        get courses(){
-            return private["_courses"];
-        },
+    //     get courses(){
+    //         return private["_courses"];
+    //     },
 
 
-    };
+    // };
 
-    return public;
+    // return public;
 }
 
-function createStudent({
+function Student({
     name = requiredParam("name"),
     age,
     email = requiredParam("email"),
@@ -98,73 +104,71 @@ function createStudent({
     learningPaths = [],
 } = {}){
 
-    const private = {
-        "_name": name,
-        "_learningPaths": learningPaths,
-    }
-    const public = {
-        age,
-        email,
-        aprovedCourses,
-        socialMedia: {
-            twitter,
-            instagram,
-            facebook,
-        },
-
-
-
-
-        get name(){
-            return private["_name"];
-        },
-
-        set name(newName){
-            if(newName.length != 0){
-                private["_name"] = newName;
-            }else{
-                console.warn("Tu nombre debe tener al menos 1 caracter");
-            }
-            
-            
-        },
-
-        get learningPaths(){
-            return private["_learningPaths"];
-        },
-
-        set learningPaths(newLP){
-
-            if(!newLP.name){
-                console.warn("Tu LP no tiene nombre");
-                return;
-            }
-
-            if(!newLP.courses){
-                console.warn("Tu LP no tiene cursos");
-                return;
-            }
-
-            if(!isArray(newLP.courses)){
-                console.warn("Tu LP no wa una lista (*de cursos)");
-                return;
-            }
-
-            private["_learningPaths"].push(newLP);
-
-            
-            
-        },
+    this.name = name;
+    this.email =email;
+    this.age = age;
+    this.aprovedCourses = aprovedCourses;
+    this.learningPaths = learningPaths;
+    this.socialMedia = {
+        twitter,
+        instagram,
+        facebook,
     };
 
+    const private = {
+        "_learningPaths": [],
+    }
 
-    return public;
-};
+    Object.defineProperty(this, "learningPaths",{
+        get(){
+            return private["_learningPaths"];
+        },
+    
+        set(newLP){
+            
+    
+            if(newLP instanceof LearningPath){
+    
+                private["_learningPaths"].push(newLP);
+                
+            }else{
+                console.warn("Alguno de los LP no es una instancia del prototipo LearninPath");
+            }
+            
+        }
+    });
 
 
-const juan = createStudent({
+
+    for(learningPathIndex in learningPaths){
+
+        this.learningPaths = learningPaths[learningPathIndex]
+
+    }
+
+    
+}
+
+
+
+
+const escuelaWeb = new LearningPath({
+    name: "Escuela WebDev"
+});
+
+const escuelaData = new LearningPath({
+    name: "Escuela Data Science"
+});
+
+
+const juan = new Student({
     name: "Juanito",
-    email: "juaniyo@gmail.com"
+    email: "juaniyo@gmail.com",
+    learningPaths:[
+        escuelaWeb,
+        escuelaData,
+
+    ],
 });
 
 
